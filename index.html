@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoplay Audio with Mute/Unmute</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        .background-gif {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-size: cover;
+            animation: backgroundChange 15s infinite;
+            z-index: 0;
+        }
+        @keyframes backgroundChange {
+            0% { background-image: url('https://media1.tenor.com/images/cda2e1e1545a75a7cd0f026e86b46d44/tenor.gif?itemid=14664086'); }
+            33% { background-image: url('https://i.pinimg.com/originals/ca/1f/8e/ca1f8e602f453cf65e7031abf60ba05f.gif'); }
+            67% { background-image: url('https://i.gifer.com/origin/ef/ef8012fc9bdf0bc585d4b87e02d516e9.gif'); }
+            100% { background-image: url('https://media1.tenor.com/images/cda2e1e1545a75a7cd0f026e86b46d44/tenor.gif?itemid=14664086'); }
+        }
+        .box-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 600px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+            padding: 20px;
+        }
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: url('https://th.bing.com/th?id=OIF.y6EpQtPL5WE%2bl%2fou4M7JKQ&rs=1&pid=ImgDetMain') no-repeat center center;
+            background-size: cover;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        .text-below {
+            font-size: 36px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff0000, #00ff00, #0000ff, #ff00ff);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientAnimation 5s ease infinite;
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8), 1px 1px 4px rgba(0, 0, 0, 0.6);
+            padding: 5px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            text-align: center;
+            opacity: 0.5;
+        }
+        .description {
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            margin-top: 10px;
+            padding: 5px;
+            opacity: 0.5;
+        }
+        .discord-icon {
+            margin-top: 20px;
+            width: 40px;
+            height: 40px;
+            background: url('https://avatars.githubusercontent.com/u/1965106?v=3') no-repeat center center;
+            background-size: cover;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+            opacity: 0.5;
+        }
+        .views-text {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            margin-top: 10px;
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            text-align: right;
+            background: linear-gradient(45deg, #ff0000, #00ff00, #0000ff, #ff00ff);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            padding: 5px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            animation: gradientAnimation 5s ease infinite;
+            opacity: 0.5;
+        }
+        .mute-icon {
+            width: 50px;
+            height: 50px;
+            background-size: cover;
+            cursor: pointer;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            opacity: 0.7;
+        }
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-gif"></div>
+    <div class="box-overlay">
+        <div class="profile-pic"></div>
+        <div class="text-below">Sluz</div>
+        <div class="description">sabog gago!</div>
+        <div class="discord-icon" onclick="copyText()"></div>
+        <div class="views-text" id="views-count">views: 0</div>
+    </div>
+    <img id="mute-icon" class="mute-icon" src="https://cdn3.iconfinder.com/data/icons/black-easy/512/535135-voice_512x512.png" alt="Unmute Icon">
+    <audio id="background-audio" autoplay loop>
+        <source src="krillz.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Update view count
+            fetch('view_counter.php')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('views-count').textContent = `views: ${data}`;
+                })
+                .catch(err => {
+                    console.error('Error fetching view count:', err);
+                });
+
+            // Typewriter effect for title
+            const titleText = 'sluz on top☠';
+            const titleElement = document.querySelector('title');
+            let index = 0;
+
+            function typeWriter() {
+                if (index < titleText.length) {
+                    titleElement.textContent += titleText.charAt(index);
+                    index++;
+                    setTimeout(typeWriter, 100);
+                } else {
+                    setTimeout(() => {
+                        index = 0;
+                        titleElement.textContent = '';
+                        typeWriter();
+                    }, 1000);
+                }
+            }
+
+            typeWriter();
+        });
+
+        function copyText() {
+            const textToCopy = "demis_ee";
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    alert('sluz discord copied to clipboard!');
+                })
+                .catch(err => {
+                    console.error('Failed to copy text:', err);
+                });
+        }
+
+        // Mute/Unmute functionality
+        const audio = document.getElementById('background-audio');
+        const muteIcon = document.getElementById('mute-icon');
+        const muteSrc = 'https://th.bing.com/th/id/R.a2e7af4698e9a6f992869ef06d88f262?rik=xkkvcKglDInAMw&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fmute-png-open-2000.png&ehk=98hmriYnzRLAwSGo6Z2RdrVvdu4%2f9tz03PbdQQPG1yI%3d&risl=&pid=ImgRaw&r=0';
+        const unmuteSrc = 'https://cdn3.iconfinder.com/data/icons/black-easy/512/535135-voice_512x512.png';
+
+        muteIcon.addEventListener('click', () => {
+            if (audio.muted) {
+                audio.muted = false;
+                muteIcon.src = unmuteSrc;
+            } else {
+                audio.muted = true;
+                muteIcon.src = muteSrc;
+            }
+        });
+    </script>
+</body>
+</html>
